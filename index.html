@@ -7050,14 +7050,17 @@ body:has(#page-customer-schedule:not(.hidden)) > header{
             }
             if(id === 'customer-price') { updateCustomerSelectedPrice(); }
             if(id === 'customer-schedule') {
-                showCustomerScheduleLoader();
+                // Loader hanya muncul jika data Firebase belum siap.
+                // Jika jadwal sudah ada, langsung tampil tanpa loading.
+                const customerScheduleReadyNow = customerScheduleMemberDataReady && customerScheduleBookingDataReady;
+                if(!customerScheduleReadyNow){
+                    showCustomerScheduleLoader();
+                }
                 initCustomerPeriodeDropdown();
                 renderCustomerGridJadwal();
-
-                // Jika data sudah ada di cache, loader tetap tampil sebentar agar
-                // customer melihat proses perpindahan menu, lalu menutup halus.
-                if(customerScheduleMemberDataReady && customerScheduleBookingDataReady){
-                    setTimeout(hideCustomerScheduleLoader, 260);
+                if(customerScheduleReadyNow){
+                    const sdl=document.getElementById('schedule-data-loader');
+                    if(sdl) sdl.classList.remove('is-visible');
                 }
             }
             if(id === 'customer-sparring') {
@@ -28070,6 +28073,160 @@ html body :is(#page-customer-booking,#page-customer-sparring,#page-customer-memb
   html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price) :is(.customer-booking-page-head,.customer-member-page-head,.customer-price-booking-header) :is(h1,h2,h3,p,span){
     color:#132a5e !important;
     text-shadow:none !important;
+  }
+}
+</style>
+
+<style id="sparing-no-glass-v1">
+/* Hilangkan efek "kaca" (backdrop-filter blur) di kartu & pembungkus halaman Sparing.
+   Efek ini di Chrome digambar sebagai kotak persegi bersudut runcing di belakang kartu
+   yang rounded, sehingga tampak seperti kaca pembungkus. Kartu tetap berwarna & rounded. */
+#page-customer-sparring #customer-sparring-list,
+#page-customer-sparring #customer-sparring-list > *,
+#page-customer-sparring .sparing-two-section-root,
+#page-customer-sparring .sparing-final-section,
+#page-customer-sparring .sparing-final-grid,
+#page-customer-sparring .sparing-final-grid > *,
+#page-customer-sparring .customer-sparring-card,
+#page-customer-sparring .customer-sparring-card > *,
+#page-customer-sparring .sparing-final-matched,
+#page-customer-sparring .sparing-final-matched > *,
+#page-customer-sparring .sparing-final-empty{
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+/* Wadah (bukan kartu) tidak boleh punya latar/bayangan sendiri. */
+#page-customer-sparring #customer-sparring-list,
+#page-customer-sparring .sparing-two-section-root,
+#page-customer-sparring .sparing-final-section,
+#page-customer-sparring .sparing-final-grid{
+  background:transparent !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  border:0 !important;
+}
+</style>
+<style id="desktop-schedule-header-visible-fix">
+/* DESKTOP SAJA (HP tidak diubah): header Jadwal tertutup #head-mask.
+   Penyebab: wrapper #page-customer-schedule masih punya backdrop-filter (blur) di desktop,
+   sehingga membuat "stacking context" baru dan header (z-index 9990) terjebak di dalamnya,
+   berada di bawah #head-mask (z-index 9000). Di HP efek blur ini sudah dimatikan,
+   jadi header aman. Di sini dimatikan juga untuk desktop. Tabel/fungsi tidak diubah. */
+@media (min-width:641px){
+  html body:not(#_a):not(#_b):not(#_c) #page-customer-schedule{
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    filter:none !important;
+    transform:none !important;
+    will-change:auto !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    outline:none !important;
+  }
+  html body:not(#_a):not(#_b):not(#_c) #page-customer-schedule .customer-schedule-member-style-head{
+    z-index:9990 !important;
+  }
+}
+</style>
+<style id="desktop-menu-header-uniform-dock">
+/* DESKTOP SAJA (min-width:641px) — HP tidak diubah.
+   Menyeragamkan header 5 menu (Booking, Sparing, Member, Jadwal, Harga):
+   - lebar = 100% area konten, yang lebarnya sudah sama dengan dock bar (--shell-w)
+   - posisi atas, tinggi, jarak ke isi, ukuran logo & judul sama persis (acuan: Member)
+   Hanya tampilan; tabel/isi/fungsi tidak diubah. */
+@media (min-width:641px){
+  /* Konten naik ke posisi yang sama di semua menu */
+  html body:not(#_a):not(#_b):not(#_c):has(#page-home.hidden) main{
+    margin-top:0 !important;
+    padding-top:0 !important;
+  }
+  /* Wrapper tiap menu: tanpa inset/margin tambahan -> selebar dock */
+  html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price){
+    width:100% !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    box-sizing:border-box !important;
+  }
+  /* Header: posisi, lebar, tinggi, jarak */
+  html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price) :is(.customer-booking-page-head,.customer-member-page-head,.customer-price-booking-header){
+    position:sticky !important;
+    top:16px !important;
+    z-index:9990 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:12px !important;
+    width:100% !important;
+    max-width:none !important;
+    min-height:104px !important;
+    margin:0 0 12px !important;
+    padding:13px 16px !important;
+    box-sizing:border-box !important;
+    border-radius:22px !important;
+    transform:none !important;
+    left:auto !important;
+    right:auto !important;
+  }
+  /* Logo sama besar */
+  html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price) :is(.customer-booking-head-logo,.customer-member-head-logo){
+    flex:0 0 76px !important;
+    width:76px !important;
+    height:76px !important;
+    margin:0 !important;
+    order:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+  html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price) :is(.customer-booking-head-logo,.customer-member-head-logo) img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    display:block !important;
+  }
+  /* Judul sama ukuran & rata kiri */
+  html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price) :is(.customer-booking-head-copy,.customer-member-head-copy){
+    order:0 !important;
+    min-width:0 !important;
+    flex:1 1 auto !important;
+    text-align:left !important;
+  }
+  html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price) :is(.customer-booking-page-head,.customer-member-page-head,.customer-price-booking-header) h2{
+    display:block !important;
+    width:auto !important;
+    margin:0 !important;
+    text-align:left !important;
+    font-size:1.15rem !important;
+    line-height:1.12 !important;
+    letter-spacing:.045em !important;
+    font-weight:950 !important;
+    white-space:normal !important;
+  }
+  html body:not(#_a):not(#_b):not(#_c) :is(#page-customer-booking,#page-customer-sparring,#page-customer-member,#page-customer-schedule,#page-customer-price) :is(.customer-booking-page-head,.customer-member-page-head,.customer-price-booking-header) h2 span{
+    display:block !important;
+    font-size:.88em !important;
+  }
+  /* Jadwal: periode & tabel selebar header/dock (tanpa inset 5px) */
+  html body:not(#_a):not(#_b):not(#_c) #page-customer-schedule :is(.customer-schedule-period-control,#booking-schedule-grid-wrap,.schedule-legend){
+    width:100% !important;
+    max-width:none !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    box-sizing:border-box !important;
+  }
+}
+</style>
+<style id="desktop-stable-scrollbar-gutter">
+/* DESKTOP SAJA (HP tidak diubah): jalur scrollbar vertikal selalu disediakan.
+   Sebelumnya menu berisi pendek (Member, Harga) tanpa scrollbar sehingga lebar layar
+   efektifnya +15px dibanding menu panjang (Booking, Sparing, Jadwal): header & dock
+   jadi bergeser ~9px dan terlihat tidak sama. Sekarang semua menu memakai lebar sama. */
+@media (min-width:641px){
+  html{
+    overflow-y:scroll !important;
+    scrollbar-gutter:stable !important;
   }
 }
 </style>
