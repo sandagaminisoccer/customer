@@ -27713,6 +27713,25 @@ if ('serviceWorker' in navigator) {
 }
 </style>
 
+<style id="mf-real-logo-max-width-v1">
+/* Logo tim asli: lebar MAKS = lebar lingkaran "EMPTY LOGO" (agar tidak keluar dari baju).
+   Tinggi mengikuti proporsi gambar. Persen mengacu ke lebar kotak .mf-team-logo. */
+#mf-poster:not(.mf-pending) .mf-team-logo > img{
+  max-width:51% !important;   /* poster Match Founded */
+  max-height:100% !important;
+  width:auto !important;
+  height:auto !important;
+  object-fit:contain !important;
+}
+#mf-poster.mf-pending .mf-team-logo > img{
+  max-width:46% !important;   /* poster Cari Lawan Sparing */
+  max-height:100% !important;
+  width:auto !important;
+  height:auto !important;
+  object-fit:contain !important;
+}
+</style>
+
 <style id="customer-period-arrows-v1">
 /* Tombol panah kiri/kanan periode — disamakan dengan Booking Schedule admin. */
 html body #page-customer-schedule .customer-schedule-period-control{
