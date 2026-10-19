@@ -6500,7 +6500,6 @@ body:has(#page-customer-schedule:not(.hidden)) > header{
 <label for="cust-metode" class="booking-row-label">💰 Metode pembayaran</label>
 <select aria-label="Pilih metode pembayaran DP" class="booking-flat-control" id="cust-metode" required="">
 <option disabled="" selected="" value="">Pilih metode</option>
-<option value="QRIS">QRIS</option>
 <option value="Transfer">Transfer</option>
 </select>
 </div>
@@ -6517,19 +6516,19 @@ body:has(#page-customer-schedule:not(.hidden)) > header{
 <div class="payment-info-title">💳 Informasi Pembayaran</div>
 <div class="payment-info-card" id="payment-transfer-card">
 <div class="payment-bank-head">
-<img alt="Bank Syariah Indonesia" class="payment-bank-logo" onerror="this.style.display='none'" src="logobsi.png"/>
+<img alt="Bank Mandiri" class="payment-bank-logo" onerror="this.style.display='none'" src="logomandiri.png"/>
 <div>
-<div class="payment-info-label">🏦 Rekening Transfer BSI</div>
-<div class="payment-account-owner">a.n. Yuyun Mardiati</div>
+<div class="payment-info-label">🏦 Rekening Transfer Bank Mandiri</div>
+<div class="payment-account-owner">a.n. PUTRI NOOR SANDAGA</div>
 </div>
 </div>
 <div class="payment-account">
-<span class="payment-account-number">7340198877</span>
+<span class="payment-account-number">310020267053</span>
 <button class="payment-small-btn" onclick="salinRekeningCustomer()" type="button">📋 Salin</button>
 </div>
 <div style="margin-top:.25rem;font-size:.5rem;color:#64748b;font-weight:700">Pastikan nomor rekening dan nama tujuan sesuai informasi dari pengelola.</div>
 </div>
-<div class="payment-info-card" id="payment-qris-card">
+<div class="payment-info-card" id="payment-qris-card" style="display:none!important" hidden>
 <div class="payment-info-label">📱 Pembayaran QRIS</div>
 <img alt="QRIS Sandaga Minisoccer" class="qris-preview" loading="lazy" src="qris.png"/>
 <div class="qris-actions">
@@ -7532,7 +7531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCustomerPaymentInfo();
     }
 });
-        window.salinRekeningCustomer = async () => { const nomor='7340198877'; try { await navigator.clipboard.writeText(nomor); alert('Nomor rekening berhasil disalin: '+nomor); } catch(e) { alert('Nomor rekening: '+nomor); } };
+        window.salinRekeningCustomer = async () => { const nomor='310020267053'; try { await navigator.clipboard.writeText(nomor); alert('Nomor rekening berhasil disalin: '+nomor); } catch(e) { alert('Nomor rekening: '+nomor); } };
 
         // ================= FIX: klik di seluruh baris (termasuk teks label) buka popup yang sama =================
         // Baris Status / Nominal DP / Metode Pembayaran / Cari Lawan Sparing memakai tombol
@@ -8119,7 +8118,7 @@ Mau konfirmasi booking dari *${namaTim}* ya.
 Kalau sudah sesuai, mohon dibantu konfirmasi ya min. Terima kasih 🙏`;
                 
                 // Nomor WhatsApp Admin
-                let nomorAdmin = "6285124057148"; 
+                let nomorAdmin = "6282357689519"; 
                 let whatsappUrl = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesanWa)}`;
 
                 // Tampilkan popup konfirmasi yang lebih rapi sebelum membuka WhatsApp.
