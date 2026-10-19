@@ -27717,21 +27717,42 @@ if ('serviceWorker' in navigator) {
 </style>
 
 <style id="mf-real-logo-max-width-v1">
-/* Logo tim asli: lebar MAKS = lebar lingkaran "EMPTY LOGO" (agar tidak keluar dari baju).
-   Tinggi mengikuti proporsi gambar. Persen mengacu ke lebar kotak .mf-team-logo. */
-#mf-poster:not(.mf-pending) .mf-team-logo > img{
-  max-width:51% !important;   /* poster Match Founded */
-  max-height:100% !important;
-  width:auto !important;
-  height:auto !important;
-  object-fit:contain !important;
+/* ===== MATCH FOUNDED =====
+   - Kotak logo dibuat simetris terhadap kolom tim (sama seperti kotak nama),
+     jadi logo & nama tim sama-sama berpusat di tengah kolom yang sama
+     (geseran horizontal lama 24px dihapus; geseran vertikal tetap).
+   - Lebar logo asli = lebar stempel "EMPTY LOGO" (82% kotak), tinggi menyesuaikan.
+   - Logo asli dibuat menyatu dengan baju: opacity 72%, tanpa bayangan, warna asli, tepi sedikit lembut. */
+#mf-poster:not(.mf-pending) .mf-team-logo{
+  left:3% !important;
+  right:3% !important;
+  max-width:none !important;
 }
+#mf-poster:not(.mf-pending) .mf-team-home .mf-team-logo,
+#mf-poster:not(.mf-pending) .mf-team-away .mf-team-logo{
+  transform:translate(0,27px) !important;
+}
+#mf-poster:not(.mf-pending) .mf-team-logo > img{
+  width:82% !important;       /* = lebar stempel logo kosong */
+  max-width:none !important;
+  height:auto !important;     /* tinggi menyesuaikan proporsi */
+  max-height:100% !important;
+  object-fit:contain !important;
+  opacity:.72 !important;     /* lebih menyatu dengan kain baju */
+  filter:blur(.3px) !important;  /* tanpa drop-shadow, warna asli, tepi sedikit lembut seperti sablon */
+  -webkit-filter:blur(.3px) !important;
+}
+
+/* ===== CARI LAWAN SPARING =====
+   Logo diperbesar 80% (skala 1.8x dari titik tengahnya, posisi tidak bergeser). */
 #mf-poster.mf-pending .mf-team-logo > img{
-  max-width:46% !important;   /* poster Cari Lawan Sparing */
+  max-width:46% !important;
   max-height:100% !important;
   width:auto !important;
   height:auto !important;
   object-fit:contain !important;
+  transform:scale(1.8) !important;
+  transform-origin:center center !important;
 }
 </style>
 
