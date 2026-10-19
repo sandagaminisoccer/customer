@@ -27722,7 +27722,7 @@ if ('serviceWorker' in navigator) {
      jadi logo & nama tim sama-sama berpusat di tengah kolom yang sama
      (geseran horizontal lama 24px dihapus; geseran vertikal tetap).
    - Lebar logo asli = lebar stempel "EMPTY LOGO" (82% kotak), tinggi menyesuaikan.
-   - Logo asli dibuat menyatu dengan baju: opacity 72%, tanpa bayangan, warna asli, tepi sedikit lembut. */
+   - Logo asli dibuat menyatu dengan baju: opacity 100% (reset), tanpa bayangan, warna asli, tepi tajam. */
 #mf-poster:not(.mf-pending) .mf-team-logo{
   left:3% !important;
   right:3% !important;
@@ -27738,9 +27738,9 @@ if ('serviceWorker' in navigator) {
   height:auto !important;     /* tinggi menyesuaikan proporsi */
   max-height:100% !important;
   object-fit:contain !important;
-  opacity:.72 !important;     /* lebih menyatu dengan kain baju */
-  filter:blur(.3px) !important;  /* tanpa drop-shadow, warna asli, tepi sedikit lembut seperti sablon */
-  -webkit-filter:blur(.3px) !important;
+  opacity:1 !important;       /* opacity di-reset: logo solid 100% */
+  filter:none !important;  /* tanpa bayangan & tanpa blur: logo tajam */
+  -webkit-filter:none !important;
 }
 
 /* ===== CARI LAWAN SPARING =====
