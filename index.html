@@ -25255,7 +25255,7 @@ body:has(#page-customer-member:not(.hidden)) main {
   </div>
     <!-- Panel slider atur logo (menempel di dasar layar, hanya tampil saat poster belum diperbesar) -->
     <div id="mf-adjust" role="group" aria-label="Atur posisi elemen poster">
-      <div class="mfa-pick"><span class="mfa-label">Atur</span><select id="mfa-target" aria-label="Pilih elemen poster"></select></div>
+      <div class="mfa-pick"><span class="mfa-label">Atur</span><button type="button" id="mfa-target-btn" class="mfa-select" aria-haspopup="dialog" aria-expanded="false" aria-label="Pilih elemen poster"><span id="mfa-target-label">Logo Tim 1</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
       <label class="mfa-row" id="mfa-row-s"><span class="mfa-label">Ukuran</span><input type="range" id="mfa-s" data-k="s" min="40" max="200" step="1" value="100"><output id="mfa-s-v">100%</output></label>
       <label class="mfa-row"><span class="mfa-label">Geser ↔</span><input type="range" id="mfa-x" data-k="x" min="-80" max="80" step="1" value="0"><output id="mfa-x-v">0</output></label>
       <label class="mfa-row"><span class="mfa-label">Geser ↕</span><input type="range" id="mfa-y" data-k="y" min="-80" max="80" step="1" value="0"><output id="mfa-y-v">0</output></label>
@@ -27804,12 +27804,39 @@ if ('serviceWorker' in navigator) {
 }
 @media (max-width:380px){#mf-adjust{width:96vw}}
 #mf-adjust .mfa-pick{display:grid;grid-template-columns:64px 1fr;align-items:center;gap:8px;margin-bottom:4px}
-#mf-adjust select{
-  width:100%;height:32px;padding:0 8px;border-radius:10px;
-  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);
-  color:#fff;font-size:.74rem;font-weight:800;font-family:inherit;
+#mf-adjust .mfa-select{
+  width:100%;height:32px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;gap:6px;
+  border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);
+  color:#fff;font-size:.74rem;font-weight:800;font-family:inherit;text-align:left;cursor:pointer;
 }
-#mf-adjust select option{color:#0f172a;background:#fff}
+#mf-adjust .mfa-select svg{width:14px;height:14px;flex:0 0 auto;opacity:.85}
+
+/* Pop-up pilih elemen — gaya disamakan dengan kalender booking (bukan dropdown bawaan HP/Windows) */
+.mfa-picker{
+  position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:20px;
+  background:rgba(15,23,42,.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.mfa-picker.is-open{display:flex}
+.mfa-dialog{
+  width:min(100%,340px);max-height:min(82vh,620px);overflow:auto;box-sizing:border-box;
+  background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.9);border-radius:24px;
+  box-shadow:0 24px 70px rgba(15,23,42,.28);padding:18px;animation:mfaPickIn .18s ease-out;
+  font-family:'Plus Jakarta Sans','Poppins',Arial,sans-serif;
+}
+.mfa-dialog-title{margin:0 0 14px;text-align:center;color:#163d2b;font-size:.95rem;font-weight:900}
+.mfa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mfa-opt{
+  min-height:46px;padding:8px 10px;border:1px solid rgba(148,163,184,.18);border-radius:12px;
+  background:rgba(248,250,252,.92);color:#163d2b;font-size:.78rem;font-weight:800;font-family:inherit;cursor:pointer;
+}
+.mfa-opt:last-child:nth-child(odd){grid-column:1/-1}
+.mfa-opt:hover,.mfa-opt:focus{background:rgba(220,252,231,.95);border-color:rgba(34,197,94,.35);outline:0}
+.mfa-opt.is-selected{background:#163d2b;color:#fff;border-color:#163d2b}
+.mfa-close{
+  width:100%;margin-top:14px;min-height:44px;border:0;border-radius:13px;
+  background:rgba(22,61,43,.08);color:#163d2b;font-weight:900;font-family:inherit;cursor:pointer;
+}
+@keyframes mfaPickIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 #mf-adjust .mfa-row{display:grid;grid-template-columns:64px 1fr 44px;align-items:center;gap:8px;margin:5px 0;cursor:default}
 #mf-adjust .mfa-row.is-off{opacity:.35}
 #mf-adjust .mfa-label{font-size:.68rem;font-weight:800;color:#cbd5e1}
@@ -27849,7 +27876,7 @@ if ('serviceWorker' in navigator) {
   var store = load();
   var cur = 'a';
   var els = {
-    sel: document.getElementById('mfa-target'),
+    sel: document.getElementById('mfa-target-btn'), selLabel: document.getElementById('mfa-target-label'),
     rowS: document.getElementById('mfa-row-s'),
     s: document.getElementById('mfa-s'), x: document.getElementById('mfa-x'), y: document.getElementById('mfa-y'),
     sv: document.getElementById('mfa-s-v'), xv: document.getElementById('mfa-x-v'), yv: document.getElementById('mfa-y-v'),
@@ -27885,16 +27912,60 @@ if ('serviceWorker' in navigator) {
     });
   }
 
-  function buildOptions(){
-    var list = available();
-    if(!list.some(function(t){ return t.k === cur; })) cur = 'a';
-    els.sel.innerHTML = '';
-    list.forEach(function(t){
-      var o = document.createElement('option');
-      o.value = t.k; o.textContent = t.label;
-      els.sel.appendChild(o);
+  var picker = null, pickerGrid = null;
+  function updateLabel(){ els.selLabel.textContent = def(cur).label; }
+  function ensurePicker(){
+    if(picker) return;
+    picker = document.createElement('div');
+    picker.id = 'mfa-picker';
+    picker.className = 'mfa-picker';
+    picker.innerHTML =
+      '<div class="mfa-dialog" role="dialog" aria-modal="true" aria-label="Pilih elemen poster">' +
+        '<h3 class="mfa-dialog-title">Pilih Elemen Poster</h3>' +
+        '<div class="mfa-grid" id="mfa-grid"></div>' +
+        '<button type="button" class="mfa-close" id="mfa-close">Tutup</button>' +
+      '</div>';
+    overlay.appendChild(picker);
+    pickerGrid = picker.querySelector('#mfa-grid');
+    // Klik di dalam pop-up tidak boleh menutup poster; klik latar / Tutup menutup pop-up saja.
+    picker.addEventListener('click', function(e){
+      e.stopPropagation();
+      if(e.target === picker || e.target.id === 'mfa-close') closePicker();
     });
-    els.sel.value = cur;
+    pickerGrid.addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('.mfa-opt') : null;
+      if(!b) return;
+      cur = b.getAttribute('data-k');
+      updateLabel(); syncSliders();
+      els.status.textContent = 'Tersimpan otomatis';
+      closePicker();
+    });
+  }
+  function renderOptions(){
+    pickerGrid.innerHTML = '';
+    available().forEach(function(t){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mfa-opt' + (t.k === cur ? ' is-selected' : '');
+      b.setAttribute('data-k', t.k);
+      b.textContent = t.label;
+      pickerGrid.appendChild(b);
+    });
+  }
+  function openPicker(){
+    ensurePicker(); renderOptions();
+    picker.classList.add('is-open');
+    els.sel.setAttribute('aria-expanded', 'true');
+  }
+  function closePicker(){
+    if(!picker) return;
+    picker.classList.remove('is-open');
+    els.sel.setAttribute('aria-expanded', 'false');
+  }
+  function buildOptions(){
+    if(!available().some(function(t){ return t.k === cur; })) cur = 'a';
+    updateLabel();
+    closePicker();
   }
 
   function syncSliders(){
@@ -27948,11 +28019,13 @@ if ('serviceWorker' in navigator) {
   els.x.addEventListener('input', onInput);
   els.y.addEventListener('input', onInput);
 
-  els.sel.addEventListener('change', function(){
-    cur = els.sel.value;
-    syncSliders();
-    els.status.textContent = 'Tersimpan otomatis';
-  });
+  els.sel.addEventListener('click', function(e){ e.stopPropagation(); openPicker(); });
+  // Escape menutup pop-up pilihan dulu (bukan langsung menutup poster)
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && picker && picker.classList.contains('is-open')){
+      e.stopImmediatePropagation(); closePicker();
+    }
+  }, true);
 
   els.reset.addEventListener('click', function(){
     var m = mode();
@@ -27963,7 +28036,7 @@ if ('serviceWorker' in navigator) {
 
   /* Klik/geser di panel tidak boleh menutup poster atau ikut toggle layar penuh.
      Flag __mfPanelDown mencegah poster tertutup saat slider dilepas di luar panel. */
-  overlay.addEventListener('pointerdown', function(e){ window.__mfPanelDown = panel.contains(e.target); }, true);
+  overlay.addEventListener('pointerdown', function(e){ window.__mfPanelDown = panel.contains(e.target) || !!(picker && picker.contains(e.target)); }, true);
   panel.addEventListener('click', function(e){ e.stopPropagation(); });
 
   apply();
