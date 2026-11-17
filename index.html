@@ -65,8 +65,8 @@
 (function () {
   "use strict";
 
-  // 1 Desember 2026, 00:00 WIB
-  var TARGET = new Date("2026-12-01T00:00:00+07:00").getTime();
+  // 1 Desember 2026, 00:00 WITA (GMT+8)
+  var TARGET = new Date("2026-12-01T00:00:00+08:00").getTime();
   var LS_KEY = "sm_lock_lastseen";
 
   var baseTime = Date.now();        // waktu "terpercaya" saat sinkron terakhir
